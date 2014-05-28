@@ -1,0 +1,172 @@
+//
+//  main.cpp
+//  Project 3
+//
+//  Created by Brad Winters on 5/27/14.
+//  Copyright (c) 2014 Brad Winters. All rights reserved.
+//
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cctype>
+#include <sstream>
+
+using namespace std;
+
+struct Customer
+{
+	string firstname;
+	string lastname;
+}
+myCustomers[100];
+
+struct Reservation
+{
+	string first_name;
+	string last_name;
+	int flight_number;
+}
+allReservations[200];
+
+struct Time
+{
+	int hour;
+	int minutes;
+};
+
+void printreservations(struct Reservation reserve)
+{
+	cout<<reserve.first_name<<" "<<reserve.last_name<<" "<<reserve.flight_number<<endl;
+}
+
+void printcustomername(struct Reservation customer)
+{
+	cout<<customer.first_name<<" "<<customer.last_name<<endl;
+}
+
+int main()
+{
+	ifstream in_file;
+    
+	if (in_file.fail())
+	{
+		return 0;
+	}
+	ofstream out_file;
+
+	in_file.open("Users/BradWinters/Desktop/Project 3");
+	out_file.open("Users/BradWinters/Desktop/Project 3");
+	cout<<"Welcome to the Flight Planner. Please Select From One of the Following:"<<endl;
+	cout<<"N - in order to create a new flight reservation"<<endl;
+	cout<<"S - in order to show the data for the existing reservations for all the users"<<endl;
+	cout<<"U - in order to show all the reservations for a particular user"<<endl;
+	cout<<"B - in order to show the names of the customers who have bookings for a particular flight"<<endl;
+	cout<<"Q - in order to quit this application"<<endl;
+	char user_input;
+	cin>>user_input;
+    
+	if (user_input == 'Q')
+	{
+		return 0;
+	}
+    
+	else if (user_input == 'N')
+	{
+		string first_name;
+		string last_name;
+		string dep_city;
+		string dest_city;
+		string temp_line;
+		cout<<"Please enter your first name: ";
+		cin>>first_name;
+		cout<<endl<<"Please enter your last name: ";
+		cin>>last_name;
+		cout<<endl<<"Please enter the departure city: ";
+		cin>>dep_city;
+		cout<<endl<<"Please enter the destination city: ";
+		cin>>dest_city;
+		int count = 0;
+        
+		while (getline(in_file, temp_line))
+		{
+			int j = 0;
+            
+			while (isalpha(temp_line[j]) || isspace(temp_line[j]))
+			{
+				j++;
+			}
+			string departure = temp_line.substr(0, j);
+			temp_line = temp_line.substr(j);
+            
+			while (!isalpha(temp_line[j]))
+			{
+				j++;
+			}
+			temp_line = temp_line.substr(j);
+			int i = 0;
+            
+			while (isalpha(temp_line[i]) || isspace(temp_line[i]))
+			{
+				i++;
+			}
+			string destination = temp_line.substr(0, i);
+			temp_line = temp_line.substr(j+i);
+            
+			int flight_num = atoi(temp_line.c_str());
+			cout<<departure<<" "<<destination<<" "<<flight_num<<endl;
+		}
+		return 0;
+	}
+    
+	else if (user_input == 'S')
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			for (int j = 0; j < 200; j++)
+			{
+				if (myCustomers[i].firstname == allReservations[j].first_name && myCustomers[i].lastname == allReservations[j].last_name)
+				{
+					printreservations(allReservations[i]);
+				}
+			}
+		}
+	}
+    
+	else if (user_input == 'U')
+	{
+		string user_first;
+		string user_last;
+		cout<<"Please enter the user's first name: ";
+		cin>>user_first;
+		cout<<"Please enter the user's last name: ";
+		cin>>user_last;
+        
+		for (int i = 0; i < 200; i++)
+		{
+			if (user_first == allReservations[i].first_name && user_last == allReservations[i].last_name)
+			{
+				printreservations(allReservations[i]);
+			}
+		}
+	}
+    
+	else if (user_input == 'B')
+	{
+		int flight_num;
+		cout<<"Please enter the flight number you are interested in: ";
+        
+		for (int i = 0; i < 200; i++)
+		{
+			if (allReservations[i].flight_number == flight_num)
+			{
+				printcustomername(allReservations[i]);
+			}
+		}
+	}
+	else
+	{
+		return 0;
+	}
+	return 0;
+}
